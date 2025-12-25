@@ -1,0 +1,166 @@
+How to use this code and predictor (easy):
+
+1. - For computers, make sure to have VS (Visual Studio) Code installed and make sure it works fine, 
+firstly, make a "Text Document" file in anywhere on your files, such as your "Documents" folder.
+
+2. - Rename it to "WR Creator Program Predictor.html", to make full sure that it's a ".html" file type, go to "View" at the top of File Explorer, 
+at the bottom of the "View" list, click on "Show" and once a new small list pops up, click on "File name extensions", there if it says ".txt", 
+remove that, replace it with ".html", if a window pops up saying "If you change a file name extension, the file might become unusable." 
+click "Yes" or press "Enter" on your keyboard.
+
+3. - Head into VS Code, we'll open our text file that we made, you can press Ctrl + O and double click that exact text file in your File Explorer, 
+or, on the top left corner, click on "File" > "Open File..." and double click on the exact text file made, you'll then have a clean, empty text file in VS Code.
+
+4. - Paste in the code (right click > "Paste" / Ctrl + V) below into this text file, then make sure to save it by pressing Ctrl + S.
+
+5. - Go back to that ".html" file on File Explorer, then right click/hover on "Open with" > your browser, then you can double click on it later on, 
+and it'll open in your browser, and you can use it freely to estimate, enjoy!
+
+———————————————————————————————————————————————————————————————
+
+Code (copy and paste):
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WR Creator Program Predictor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f1220;
+      color: #eaeaf0;
+      padding: 30px;
+    }
+    h1 { color: #6ee7ff; }
+    .box {
+      background: #1b1f3a;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 520px;
+    }
+    input {
+      width: 100%;
+      margin: 6px 0;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      margin-top: 12px;
+      padding: 10px;
+      width: 100%;
+      background: #6ee7ff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 1.05em;
+    }
+    .trend {
+      margin-top: 10px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+<h1>WR Creator Program Rank Predictor</h1>
+
+<div class="box">
+  <h3>Current Period</h3>
+  <input id="videos" type="number" placeholder="Videos this period">
+  <input id="views" type="number" placeholder="Views this period">
+  <input id="subs" type="number" placeholder="Subscribers">
+
+  <h3>Previous Period (informational)</h3>
+  <input id="prevVideos" type="number" placeholder="Videos last period">
+  <input id="prevViews" type="number" placeholder="Views last period">
+
+  <button onclick="predict()">Predict Rank Outcome</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+function clamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
+}
+
+function predict() {
+  const videos = Number(document.getElementById("videos").value);
+  const views = Number(document.getElementById("views").value);
+  const subs = Number(document.getElementById("subs").value);
+
+  const prevVideos = Number(document.getElementById("prevVideos").value);
+  const prevViews = Number(document.getElementById("prevViews").value);
+
+  // ---- Gold baselines ----
+  const targetVideos = 22;
+  const targetViews = 1400;
+
+  // ---- Core scoring (NO previous period influence) ----
+  const videoScore = clamp(videos / targetVideos, 0, 1);
+  const viewScore = clamp(views / targetViews, 0, 1);
+  const subScore = clamp(subs / 1200, 0, 1);
+
+  let score =
+    (videoScore * 0.35) +
+    (viewScore * 0.50) +
+    (subScore * 0.15);
+
+  score = clamp(score, 0, 1);
+  const probability = Math.round(score * 100);
+
+  // ---- Date estimation ----
+  const today = new Date();
+  let monthsToGold;
+
+  if (probability >= 80) monthsToGold = 0;
+  else if (probability >= 65) monthsToGold = 1;
+  else if (probability >= 50) monthsToGold = 2;
+  else monthsToGold = 4;
+
+  const estDate = new Date(
+    today.getFullYear(),
+    today.getMonth() + monthsToGold,
+    5
+  );
+
+  // ---- Main verdict ----
+  let verdict;
+  if (probability >= 70) {
+    verdict = "✅ Strong chance of reaching Gold";
+  } else if (probability >= 50) {
+    verdict = "⚠️ Possible, but needs consistency";
+  } else {
+    verdict = "❌ Staying Silver for now";
+  }
+
+  // ---- Trend analysis (display only) ----
+  let trendText = "";
+  if (prevVideos > 0 && prevViews > 0) {
+    if (videos > prevVideos && views > prevViews) {
+      trendText = "📈 Trend: Improved vs last period";
+    } else if (videos < prevVideos && views < prevViews) {
+      trendText = "📉 Trend: Decline vs last period";
+    } else {
+      trendText = "➖ Trend: Mixed / similar to last period";
+    }
+  }
+
+  document.getElementById("result").innerHTML = `
+    <strong>${verdict}</strong><br>
+    (${probability}% probability)<br><br>
+    Estimated Gold date:<br>
+    ${estDate.toDateString()}
+    <div class="trend">${trendText}</div>
+  `;
+}
+</script>
+
+</body>
+</html>
