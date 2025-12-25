@@ -124,28 +124,41 @@ function predict() {
 
   // ---- Date estimation ----
   const today = new Date();
-  let monthsToGold;
+  // Scale months smoothly instead of buckets
+let monthsToGold = Math.round(
+  clamp((100 - probability) / 25, 0, 4)
+);
 
-  if (probability >= 80) monthsToGold = 0;
-  else if (probability >= 65) monthsToGold = 1;
-  else if (probability >= 50) monthsToGold = 2;
-  else monthsToGold = 4;
 
-  const estDate = new Date(
+  let estDate = new Date(
+  today.getFullYear(),
+  today.getMonth() + monthsToGold,
+  5
+);
+
+// Prevent past-date predictions
+if (estDate < today) {
+  estDate = new Date(
     today.getFullYear(),
-    today.getMonth() + monthsToGold,
+    today.getMonth() + monthsToGold + 1,
     5
   );
+}
+
 
   // ---- Main verdict ----
   let verdict;
-  if (probability >= 70) {
-    verdict = "✅ Strong chance of reaching Gold";
-  } else if (probability >= 50) {
-    verdict = "⚠️ Possible, but needs consistency";
-  } else {
-    verdict = "❌ Staying Silver for now";
-  }
+
+if (probability >= 80) {
+  verdict = "🔥 Extremely strong chance of reaching Gold";
+} else if (probability >= 65) {
+  verdict = "✅ Good momentum toward Gold";
+} else if (probability >= 50) {
+  verdict = "⚠️ Possible, but needs consistency";
+} else {
+  verdict = "❌ Staying Silver for now";
+}
+
 
   // ---- Trend analysis (display only) ----
   let trendText = "";
