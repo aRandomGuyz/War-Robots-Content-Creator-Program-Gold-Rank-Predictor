@@ -31,28 +31,46 @@ Code (copy and paste):
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>WR Creator Program Predictor</title>
+  <title>WR Creator Program Rank Predictor</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #0f1220;
       color: #eaeaf0;
+      min-height: 100vh;
+      margin: 0;
       padding: 30px;
+
+      /* CENTER EVERYTHING */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    h1 { color: #6ee7ff; }
+
+    h1 {
+      color: #6ee7ff;
+      margin-bottom: 20px;
+    }
+
     .box {
       background: #1b1f3a;
       padding: 20px;
       border-radius: 10px;
       max-width: 520px;
+      width: 100%;
+      box-sizing: border-box;
     }
+
     input {
       width: 100%;
       margin: 6px 0;
       padding: 8px;
       border-radius: 5px;
       border: none;
+      box-sizing: border-box;
     }
+
     button {
       margin-top: 12px;
       padding: 10px;
@@ -63,124 +81,157 @@ Code (copy and paste):
       font-weight: bold;
       cursor: pointer;
     }
+
     .result {
       margin-top: 20px;
       font-size: 1.05em;
     }
+
     .trend {
       margin-top: 10px;
       opacity: 0.9;
     }
+
+    .info {
+      margin-top: 25px;
+      opacity: 0.95;
+    }
+
+    ul {
+      padding-left: 18px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .disclaimer {
+      margin-top: 12px;
+      font-size: 0.85em;
+      opacity: 0.75;
+    }
   </style>
 </head>
+
 <body>
 
-<h1>WR Creator Program Rank Predictor</h1>
+  <h1>WR Creator Program Rank Predictor</h1>
 
-<div class="box">
-  <h3>Current Period</h3>
-  <input id="videos" type="number" placeholder="Videos this period">
-  <input id="views" type="number" placeholder="Views this period">
-  <input id="subs" type="number" placeholder="Subscribers">
+  <!-- PREDICTOR -->
+  <div class="box">
+    <h3>Current Period</h3>
+    <input id="videos" type="number" placeholder="Videos this period">
+    <input id="views" type="number" placeholder="Views this period">
+    <input id="subs" type="number" placeholder="Subscribers">
 
-  <h3>Previous Period (informational)</h3>
-  <input id="prevVideos" type="number" placeholder="Videos last period">
-  <input id="prevViews" type="number" placeholder="Views last period">
+    <h3>Previous Period (informational)</h3>
+    <input id="prevVideos" type="number" placeholder="Videos last period">
+    <input id="prevViews" type="number" placeholder="Views last period">
 
-  <button onclick="predict()">Predict Rank Outcome</button>
+    <button onclick="predict()">Predict Rank Outcome</button>
 
-  <div class="result" id="result"></div>
-</div>
+    <div class="result" id="result"></div>
+  </div>
 
-<script>
-function clamp(val, min, max) {
-  return Math.max(min, Math.min(max, val));
-}
+  <!-- INFO SECTION -->
+  <div class="box info">
+    <h3>How you know you have reached Gold</h3>
+    <ul>
+      <li><strong>Email Notification [Most Common]</strong> – This is the main and expected way, official confirmation sent to your email attached to the Creator Program, the subject is usually somethign like "Creator Program Rank Update" or "Congratulations on Reaching Gold", the email typically mentions new rank, benefits unlocked, sometimes next expectations, this is the clearest, no-doubt confirmation.</li>
+      <li><strong>Dashboard Rank Update</strong> – Even if email is delayed, the Dashboard rank will still change from Silver to Gold. New rewards/perks become visible. Sometimes stats reset for the new tier. Many creators actually notice this before reading the email. So realistically: Dashboard change = Confirmation / Email = Official Acknowledgement.</li>
+      <li><strong>Silent Dashboard Promotion [RARE But Possible]</strong> – It's not common, but it can happen in this form: No immediate email. Dashboard rank changes. Email arrives hours or days later. What doesn't happen: Staying Silver rank visually while secretly being Gold rank. Being promoted without any dashboard indication at all. So: True silent promotion with no dashboard change = Basically no.</li>
+      <li><strong>⚠️Important⚠️</strong>: Make SURE to work hard though, upload atleast ~20+ videos (videos, shorts, streams) per period, and make sure they are informative, if you get nearly around ~1,000 or more views, excellent, you're on a good path, keep it up, subscribers are also good but don't matter as much.</li>
+    </ul>
 
-function predict() {
-  const videos = Number(document.getElementById("videos").value);
-  const views = Number(document.getElementById("views").value);
-  const subs = Number(document.getElementById("subs").value);
+    <div class="disclaimer">
+      This is an unofficial community-made estimator. Not affiliated at all with Pixonic or MY.GAMES. I, an anonymous Silver rank Creator in the Program since the SWORD Unit-190 event also made this predictor and will be continuously updating it for errors via VS (Visual Studio) Code and releasing it further, even if I make it into Gold rank.
+    </div>
+  </div>
 
-  const prevVideos = Number(document.getElementById("prevVideos").value);
-  const prevViews = Number(document.getElementById("prevViews").value);
-
-  // ---- Gold baselines ----
-  const targetVideos = 22;
-  const targetViews = 1400;
-
-  // ---- Core scoring (NO previous period influence) ----
-  const videoScore = clamp(videos / targetVideos, 0, 1);
-  const viewScore = clamp(views / targetViews, 0, 1);
-  const subScore = clamp(subs / 1200, 0, 1);
-
-  let score =
-    (videoScore * 0.35) +
-    (viewScore * 0.50) +
-    (subScore * 0.15);
-
-  score = clamp(score, 0, 1);
-  const probability = Math.round(score * 100);
-
-  // ---- Date estimation ----
-  const today = new Date();
-  // Scale months smoothly instead of buckets
-let monthsToGold = Math.round(
-  clamp((100 - probability) / 25, 0, 4)
-);
-
-
-  let estDate = new Date(
-  today.getFullYear(),
-  today.getMonth() + monthsToGold,
-  5
-);
-
-// Prevent past-date predictions
-if (estDate < today) {
-  estDate = new Date(
-    today.getFullYear(),
-    today.getMonth() + monthsToGold + 1,
-    5
-  );
-}
-
-
-  // ---- Main verdict ----
-  let verdict;
-
-if (probability >= 80) {
-  verdict = "🔥 Extremely strong chance of reaching Gold";
-} else if (probability >= 65) {
-  verdict = "✅ Good momentum toward Gold";
-} else if (probability >= 50) {
-  verdict = "⚠️ Possible, but needs consistency";
-} else {
-  verdict = "❌ Staying Silver for now";
-}
-
-
-  // ---- Trend analysis (display only) ----
-  let trendText = "";
-  if (prevVideos > 0 && prevViews > 0) {
-    if (videos > prevVideos && views > prevViews) {
-      trendText = "📈 Trend: Improved vs last period";
-    } else if (videos < prevVideos && views < prevViews) {
-      trendText = "📉 Trend: Decline vs last period";
-    } else {
-      trendText = "➖ Trend: Mixed / similar to last period";
+  <script>
+    function clamp(val, min, max) {
+      return Math.max(min, Math.min(max, val));
     }
-  }
 
-  document.getElementById("result").innerHTML = `
-    <strong>${verdict}</strong><br>
-    (${probability}% probability)<br><br>
-    Estimated Gold date:<br>
-    ${estDate.toDateString()}
-    <div class="trend">${trendText}</div>
-  `;
-}
-</script>
+    function predict() {
+      const videos = Number(document.getElementById("videos").value);
+      const views = Number(document.getElementById("views").value);
+      const subs = Number(document.getElementById("subs").value);
+
+      const prevVideos = Number(document.getElementById("prevVideos").value);
+      const prevViews = Number(document.getElementById("prevViews").value);
+
+      // Baselines
+      const targetVideos = 22;
+      const targetViews = 1400;
+
+      // Core score (current period only)
+      const videoScore = clamp(videos / targetVideos, 0, 1);
+      const viewScore = clamp(views / targetViews, 0, 1);
+      const subScore = clamp(subs / 1200, 0, 1);
+
+      let score =
+        (videoScore * 0.35) +
+        (viewScore * 0.50) +
+        (subScore * 0.15);
+
+      score = clamp(score, 0, 1);
+      const probability = Math.round(score * 100);
+
+      // Smooth month scaling
+      let monthsToGold = Math.round(
+        clamp((100 - probability) / 25, 0, 4)
+      );
+
+      const today = new Date();
+      let estDate = new Date(
+        today.getFullYear(),
+        today.getMonth() + monthsToGold,
+        5
+      );
+
+      // Prevent past dates
+      if (estDate < today) {
+        estDate = new Date(
+          today.getFullYear(),
+          today.getMonth() + monthsToGold + 1,
+          5
+        );
+      }
+
+      // Verdict
+      let verdict;
+      if (probability >= 80) {
+        verdict = "🔥 Extremely strong chance of reaching Gold";
+      } else if (probability >= 65) {
+        verdict = "✅ Good momentum toward Gold";
+      } else if (probability >= 50) {
+        verdict = "⚠️ Possible, but needs consistency";
+      } else {
+        verdict = "❌ Staying Silver for now";
+      }
+
+      // Trend (display only)
+      let trendText = "";
+      if (prevVideos > 0 && prevViews > 0) {
+        if (videos > prevVideos && views > prevViews) {
+          trendText = "📈 Trend: Improved vs last period";
+        } else if (videos < prevVideos && views < prevViews) {
+          trendText = "📉 Trend: Decline vs last period";
+        } else {
+          trendText = "➖ Trend: Mixed vs last period";
+        }
+      }
+
+      document.getElementById("result").innerHTML = `
+        <strong>${verdict}</strong><br>
+        (${probability}% probability)<br><br>
+        Estimated Gold date:<br>
+        ${estDate.toDateString()}
+        <div class="trend">${trendText}</div>
+      `;
+    }
+  </script>
 
 </body>
 </html>
