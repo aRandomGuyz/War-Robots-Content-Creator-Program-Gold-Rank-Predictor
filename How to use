@@ -1,7 +1,8 @@
-⚠️ GO TO THE COMMENT SECTION TO JUST DOWNLOAD IT AND ACCESS IT FROM THERE. ⚠️
+⚠️ GO TO THE COMMENT SECTION TO DOWNLOAD IT AND ACCESS IT FROM THERE. ⚠️
 
 ⚠️ For iOS (I only own an iPhone), JavaScript/JS won't work with the system, not sure about Android, 
-recommendably use this on a computer. ⚠️
+
+Recommendably use this on a computer. ⚠️
 
 ———————————————————————————————————————————————————————————————
 
@@ -34,6 +35,45 @@ Code (Optional: copy and paste):
   <title>WR Creator Program Rank Predictor</title>
 
   <style>
+    .tenure-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.tenure-options {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.tenure-option {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.tenure-option input {
+  display: none;
+}
+
+.tenure-option span {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #4caf50;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.tenure-option:hover span {
+  border-color: #2e7d32;
+}
+
+.tenure-option input:checked + span {
+  background-color: #4caf50;
+}
+
     body {
       font-family: Arial, sans-serif;
       background: #0f1220;
@@ -117,6 +157,27 @@ Code (Optional: copy and paste):
 
   <h1>WR Creator Program Rank Predictor</h1>
 
+  <div class="tenure-section">
+  <p><strong>Time in Creator Program</strong></p>
+
+  <div class="tenure-options">
+    <label class="tenure-option">
+      <input type="radio" name="tenure" value="new" checked>
+      <span></span> 1–3 months
+    </label>
+
+    <label class="tenure-option">
+      <input type="radio" name="tenure" value="mid">
+      <span></span> 3–6 months
+    </label>
+
+    <label class="tenure-option">
+      <input type="radio" name="tenure" value="long">
+      <span></span> 6+ months
+    </label>
+  </div>
+</div>
+
   <!-- PREDICTOR -->
   <div class="box">
     <h3>Current Period</h3>
@@ -140,7 +201,8 @@ Code (Optional: copy and paste):
       <li><strong>Email Notification [Most Common]</strong> – This is the main and expected way, official confirmation sent to your email attached to the Creator Program, the subject is usually somethign like "Creator Program Rank Update" or "Congratulations on Reaching Gold", the email typically mentions new rank, benefits unlocked, sometimes next expectations, this is the clearest, no-doubt confirmation.</li>
       <li><strong>Dashboard Rank Update</strong> – Even if email is delayed, the Dashboard rank will still change from Silver to Gold. New rewards/perks become visible. Sometimes stats reset for the new tier. Many creators actually notice this before reading the email. So realistically: Dashboard change = Confirmation / Email = Official Acknowledgement.</li>
       <li><strong>Silent Dashboard Promotion [RARE But Possible]</strong> – It's not common, but it can happen in this form: No immediate email. Dashboard rank changes. Email arrives hours or days later. What doesn't happen: Staying Silver rank visually while secretly being Gold rank. Being promoted without any dashboard indication at all. So: True silent promotion with no dashboard change = Basically no.</li>
-      <li><strong>⚠️Important⚠️</strong>: Make SURE to work hard though, upload atleast ~20+ videos (videos, shorts, streams) per period, and make sure they are informative, if you get nearly around ~1,000 or more views, excellent, you're on a good path, keep it up, subscribers are also good but don't matter as much.</li>
+      <li><strong>⚠️Important⚠️</strong>: Make SURE to work hard though, upload atleast ~15+ videos (videos, shorts, streams) per period, also be consistent with your videos, and make sure they are showing good builds, and can be informative, if you get nearly around ~1,000 or more views, excellent, you're on a good path, keep it up, subscribers are also good but don't matter as much.</li>
+      <li><strong>For Your Information (FYI)</strong>: Ever since my good friend made it in Gold rank despite much lower stats than me, with these stats recorded, this predictor gets changed more and more, I also think of and find ways to improve this predictor, it isn't all that easy but if it helps someone, awesome!</li>
     </ul>
 
     <div class="disclaimer">
@@ -161,6 +223,8 @@ Code (Optional: copy and paste):
 
     const prevVideos = Number(document.getElementById("prevVideos").value);
     const prevViews = Number(document.getElementById("prevViews").value);
+    const tenure = document.querySelector('input[name="tenure"]:checked').value;
+
 
     let score = 0;
     let notes = [];
@@ -192,6 +256,15 @@ Code (Optional: copy and paste):
       notes.push("Supportive subscriber base");
     }
 
+    // 🕒 Time-in-program weighting (trust factor)
+if (tenure === "new") {
+  score -= 2; // Pixonic often waits longer
+} else if (tenure === "mid") {
+  score += 0; // neutral
+} else if (tenure === "long") {
+  score += 2; // trusted creator boost
+}
+
     // Cap score
     score = clamp(score, 0, 13);
 
@@ -199,38 +272,50 @@ Code (Optional: copy and paste):
     let verdict, probability, window;
 
     if (score >= 10) {
-      verdict = "✅ Strong eligibility for Gold";
-      probability = "75–90%";
-      window = "Next monthly review";
-    } else if (score >= 7) {
-      verdict = "⚠️ Possible Gold (human review)";
-      probability = "55–70%";
-      window = "Next 1–2 review cycles";
-    } else {
-      verdict = "❌ Likely staying Silver for now";
-      probability = "<40%";
-      window = "Future review";
-    }
+  if (tenure === "new") {
+  verdict = "⚠️ Strong stats, but new Silver (review likely delayed)";
+} 
+else if (tenure === "mid") {
+  verdict = "✅ Good eligibility for Gold (review-dependent)";
+} 
+else {
+  verdict = "✅ Strong eligibility for Gold";
+}
+
+  probability = "75–90%";
+  window = "Next monthly review";
+}
+else if (score >= 7) {
+  verdict = "⚠️ Possible Gold (human review)";
+  probability = "55–70%";
+  window = "Next 1–2 review cycles";
+}
+else {
+  verdict = "❌ Likely staying Silver for now";
+  probability = "<40%";
+  window = "Future review";
+}
+
 
     // Trend (display only, informational)
     let trendText = "";
     if (prevVideos > 0 && prevViews > 0) {
       if (videos > prevVideos && views > prevViews) {
-        trendText = "📈 Trend: Improved vs last period";
+        trendText = "📈 Trend: Improved vs Last Period";
       } else if (videos < prevVideos && views < prevViews) {
-        trendText = "📉 Trend: Decline vs last period";
+        trendText = "📉 Trend: Decline vs Last Period";
       } else {
-        trendText = "➖ Trend: Mixed vs last period";
+        trendText = "➖ Trend: Mixed vs Last Period";
       }
     }
 
     document.getElementById("result").innerHTML = `
       <strong>${verdict}</strong><br>
       (${probability} probability)<br><br>
-      ⏳ <strong>Estimated Gold window:</strong><br>
+      ⏳ <strong>Estimated Gold Window:</strong><br>
       ${window}
       <div class="trend">${trendText}</div>
-      <div class="trend">📊 Consistency score: ${score}/13</div>
+      <div class="trend">📊 Consistency Score: ${score}/13</div>
     `;
   }
 </script>
