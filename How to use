@@ -25,7 +25,7 @@ and it'll open in your browser, and you can use it freely to estimate, enjoy!
 
 ———————————————————————————————————————————————————————————————
 
-Code (copy and paste):
+Code (Optional: copy and paste):
 
 <!DOCTYPE html>
 <html lang="en">
@@ -124,7 +124,7 @@ Code (copy and paste):
     <input id="views" type="number" placeholder="Views this period">
     <input id="subs" type="number" placeholder="Subscribers">
 
-    <h3>Previous Period (informational)</h3>
+    <h3>Previous Period (Informational)</h3>
     <input id="prevVideos" type="number" placeholder="Videos last period">
     <input id="prevViews" type="number" placeholder="Views last period">
 
@@ -148,90 +148,92 @@ Code (copy and paste):
     </div>
   </div>
 
-  <script>
-    function clamp(val, min, max) {
-      return Math.max(min, Math.min(max, val));
+  
+   <script>
+  function clamp(val, min, max) {
+    return Math.max(min, Math.min(max, val));
+  }
+
+  function predict() {
+    const videos = Number(document.getElementById("videos").value);
+    const views = Number(document.getElementById("views").value);
+    const subs = Number(document.getElementById("subs").value);
+
+    const prevVideos = Number(document.getElementById("prevVideos").value);
+    const prevViews = Number(document.getElementById("prevViews").value);
+
+    let score = 0;
+    let notes = [];
+
+    // 1️⃣ Upload consistency (MOST IMPORTANT)
+    if (videos >= 6) { score += 3; notes.push("Active uploads this period"); }
+    if (prevVideos >= 6) { score += 3; notes.push("Active uploads last period"); }
+    if (videos >= prevVideos - 3) { score += 2; notes.push("Stable upload frequency"); }
+
+    // 2️⃣ View stability (NOT growth-based)
+    if (prevViews > 0 && views >= prevViews * 0.7) {
+      score += 2;
+      notes.push("Views remained stable");
+    }
+    if (views > prevViews) {
+      score += 2;
+      notes.push("Views improved");
     }
 
-    function predict() {
-      const videos = Number(document.getElementById("videos").value);
-      const views = Number(document.getElementById("views").value);
-      const subs = Number(document.getElementById("subs").value);
+    // 3️⃣ Continuity (no inactivity)
+    if (videos > 0 && prevVideos > 0) {
+      score += 2;
+      notes.push("No inactivity detected");
+    }
 
-      const prevVideos = Number(document.getElementById("prevVideos").value);
-      const prevViews = Number(document.getElementById("prevViews").value);
+    // 4️⃣ Subscribers (supporting only, NEVER blocking)
+    if (subs >= 500) {
+      score += 1;
+      notes.push("Supportive subscriber base");
+    }
 
-      // Baselines
-      const targetVideos = 22;
-      const targetViews = 1400;
+    // Cap score
+    score = clamp(score, 0, 13);
 
-      // Core score (current period only)
-      const videoScore = clamp(videos / targetVideos, 0, 1);
-      const viewScore = clamp(views / targetViews, 0, 1);
-      const subScore = clamp(subs / 1200, 0, 1);
+    // Verdict + probability bands
+    let verdict, probability, window;
 
-      let score =
-        (videoScore * 0.35) +
-        (viewScore * 0.50) +
-        (subScore * 0.15);
+    if (score >= 10) {
+      verdict = "✅ Strong eligibility for Gold";
+      probability = "75–90%";
+      window = "Next monthly review";
+    } else if (score >= 7) {
+      verdict = "⚠️ Possible Gold (human review)";
+      probability = "55–70%";
+      window = "Next 1–2 review cycles";
+    } else {
+      verdict = "❌ Likely staying Silver for now";
+      probability = "<40%";
+      window = "Future review";
+    }
 
-      score = clamp(score, 0, 1);
-      const probability = Math.round(score * 100);
-
-      // Smooth month scaling
-      let monthsToGold = Math.round(
-        clamp((100 - probability) / 25, 0, 4)
-      );
-
-      const today = new Date();
-      let estDate = new Date(
-        today.getFullYear(),
-        today.getMonth() + monthsToGold,
-        5
-      );
-
-      // Prevent past dates
-      if (estDate < today) {
-        estDate = new Date(
-          today.getFullYear(),
-          today.getMonth() + monthsToGold + 1,
-          5
-        );
-      }
-
-      // Verdict
-      let verdict;
-      if (probability >= 80) {
-        verdict = "🔥 Extremely strong chance of reaching Gold";
-      } else if (probability >= 65) {
-        verdict = "✅ Good momentum toward Gold";
-      } else if (probability >= 50) {
-        verdict = "⚠️ Possible, but needs consistency";
+    // Trend (display only, informational)
+    let trendText = "";
+    if (prevVideos > 0 && prevViews > 0) {
+      if (videos > prevVideos && views > prevViews) {
+        trendText = "📈 Trend: Improved vs last period";
+      } else if (videos < prevVideos && views < prevViews) {
+        trendText = "📉 Trend: Decline vs last period";
       } else {
-        verdict = "❌ Staying Silver for now";
+        trendText = "➖ Trend: Mixed vs last period";
       }
-
-      // Trend (display only)
-      let trendText = "";
-      if (prevVideos > 0 && prevViews > 0) {
-        if (videos > prevVideos && views > prevViews) {
-          trendText = "📈 Trend: Improved vs last period";
-        } else if (videos < prevVideos && views < prevViews) {
-          trendText = "📉 Trend: Decline vs last period";
-        } else {
-          trendText = "➖ Trend: Mixed vs last period";
-        }
-      }
-
-      document.getElementById("result").innerHTML = `
-        <strong>${verdict}</strong><br>
-        (${probability}% probability)<br><br>
-        Estimated Gold date:<br>
-        ${estDate.toDateString()}
-        <div class="trend">${trendText}</div>
-      `;
     }
-  </script>
+
+    document.getElementById("result").innerHTML = `
+      <strong>${verdict}</strong><br>
+      (${probability} probability)<br><br>
+      ⏳ <strong>Estimated Gold window:</strong><br>
+      ${window}
+      <div class="trend">${trendText}</div>
+      <div class="trend">📊 Consistency score: ${score}/13</div>
+    `;
+  }
+</script>
 
 </body>
 </html>
