@@ -35,120 +35,132 @@ Code (Optional: copy and paste):
   <title>WR Creator Program Rank Predictor</title>
 
   <style>
-    .tenure-section {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.tenure-options {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.tenure-option {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.tenure-option input {
-  display: none;
-}
-
-.tenure-option span {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid #4caf50;
-  transition: background-color 0.2s, border-color 0.2s;
-}
-
-.tenure-option:hover span {
-  border-color: #2e7d32;
-}
-
-.tenure-option input:checked + span {
-  background-color: #4caf50;
-}
-
     body {
       font-family: Arial, sans-serif;
-      background: #0f1220;
-      color: #eaeaf0;
-      min-height: 100vh;
+      background: #0b0f1a;
+      color: #ffffff;
       margin: 0;
-      padding: 30px;
-
-      /* CENTER EVERYTHING */
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding: 0;
     }
 
     h1 {
-      color: #6ee7ff;
-      margin-bottom: 20px;
+      text-align: center;
+      margin-top: 20px;
     }
 
-    .box {
-      background: #1b1f3a;
+    /* PAGE LAYOUT */
+    .page-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
       padding: 20px;
-      border-radius: 10px;
-      max-width: 520px;
-      width: 100%;
-      box-sizing: border-box;
+      align-items: flex-start;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* BOX STYLE */
+    .box {
+      background: #11151f;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 420px;
+    }
+
+    .box.info {
+      opacity: 0.95;
+      font-size: 14px;
     }
 
     input {
       width: 100%;
-      margin: 6px 0;
       padding: 8px;
-      border-radius: 5px;
+      margin: 5px 0 10px 0;
+      border-radius: 6px;
       border: none;
-      box-sizing: border-box;
     }
 
     button {
-      margin-top: 12px;
-      padding: 10px;
       width: 100%;
-      background: #6ee7ff;
+      padding: 10px;
+      border-radius: 8px;
       border: none;
-      border-radius: 6px;
-      font-weight: bold;
       cursor: pointer;
+      font-weight: bold;
+      background: #2f6bff;
+      color: white;
     }
 
-    .result {
-      margin-top: 20px;
-      font-size: 1.05em;
+    button:hover {
+      opacity: 0.85;
     }
 
-    .trend {
+    /* TENURE SECTION */
+    .tenure-section {
+      text-align: center;
+    }
+
+    .tenure-options {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 8px;
+    }
+
+    .tenure-options button {
+      width: auto;
+      padding: 8px 14px;
+      background: #1e2435;
+    }
+
+    .tenure-options button.active {
+      background: #2f6bff;
+    }
+
+    /* ABOUT PANEL */
+    #toggleAboutBtn {
+      width: 35%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      background: #1e2435;
+      color: white;
+    }
+
+    #toggleAboutBtn:hover {
+      background: #2a314a;
+    }
+
+    .about-panel {
+      max-width: 600px;
+      background: #11151f;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .about-panel h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .about-panel .small {
+      font-size: 12px;
+      opacity: 0.7;
       margin-top: 10px;
-      opacity: 0.9;
     }
 
-    .info {
-      margin-top: 25px;
-      opacity: 0.95;
-    }
-
-    ul {
-      padding-left: 18px;
-    }
-
-    li {
-      margin-bottom: 6px;
-    }
-
-    .disclaimer {
-      margin-top: 12px;
-      font-size: 0.85em;
-      opacity: 0.75;
+    #result {
+      margin-top: 10px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -157,168 +169,251 @@ Code (Optional: copy and paste):
 
   <h1>WR Creator Program Rank Predictor</h1>
 
-  <div class="tenure-section">
-  <p><strong>Time in Creator Program</strong></p>
+  <div class="page-wrapper">
 
-  <div class="tenure-options">
-    <label class="tenure-option">
-      <input type="radio" name="tenure" value="new" checked>
-      <span></span> 1–3 months
-    </label>
+    <!-- LEFT SIDE -->
+    <div class="left-column">
 
-    <label class="tenure-option">
-      <input type="radio" name="tenure" value="mid">
-      <span></span> 3–6 months
-    </label>
+      <!-- TENURE -->
+      <div class="tenure-section">
+        <p><b>Time in Creator Program:</b></p>
+        <div class="tenure-options">
+          <button onclick="setTenure(1)">1–3 months</button>
+          <button onclick="setTenure(2)">3–6 months</button>
+          <button onclick="setTenure(3)">6+ months</button>
+        </div>
+      </div>
 
-    <label class="tenure-option">
-      <input type="radio" name="tenure" value="long">
-      <span></span> 6+ months
-    </label>
-  </div>
-</div>
+      <!-- PREDICTOR -->
+      <div class="box">
+        <label>Current Period Videos</label>
+        <input id="videos" type="number">
 
-  <!-- PREDICTOR -->
-  <div class="box">
-    <h3>Current Period</h3>
-    <input id="videos" type="number" placeholder="Videos this period">
-    <input id="views" type="number" placeholder="Views this period">
-    <input id="subs" type="number" placeholder="Subscribers">
+        <label>Current Period Views</label>
+        <input id="views" type="number">
 
-    <h3>Previous Period (Informational)</h3>
-    <input id="prevVideos" type="number" placeholder="Videos last period">
-    <input id="prevViews" type="number" placeholder="Views last period">
+        <label>Subscribers</label>
+        <input id="subs" type="number">
 
-    <button onclick="predict()">Predict Rank Outcome</button>
+        <label>Previous Period Videos</label>
+        <input id="prevVideos" type="number">
 
-    <div class="result" id="result"></div>
-  </div>
+        <label>Previous Period Views</label>
+        <input id="prevViews" type="number">
 
-  <!-- INFO SECTION -->
-  <div class="box info">
-    <h3>How you know you have reached Gold</h3>
-    <ul>
-      <li><strong>Email Notification [Most Common]</strong> – This is the main and expected way, official confirmation sent to your email attached to the Creator Program, the subject is usually somethign like "Creator Program Rank Update" or "Congratulations on Reaching Gold", the email typically mentions new rank, benefits unlocked, sometimes next expectations, this is the clearest, no-doubt confirmation.</li>
-      <li><strong>Dashboard Rank Update</strong> – Even if email is delayed, the Dashboard rank will still change from Silver to Gold. New rewards/perks become visible. Sometimes stats reset for the new tier. Many creators actually notice this before reading the email. So realistically: Dashboard change = Confirmation / Email = Official Acknowledgement.</li>
-      <li><strong>Silent Dashboard Promotion [RARE But Possible]</strong> – It's not common, but it can happen in this form: No immediate email. Dashboard rank changes. Email arrives hours or days later. What doesn't happen: Staying Silver rank visually while secretly being Gold rank. Being promoted without any dashboard indication at all. So: True silent promotion with no dashboard change = Basically no.</li>
-      <li><strong>⚠️Important⚠️</strong>: Make SURE to work hard though, upload atleast ~15+ videos (videos, shorts, streams) per period, also be consistent with your videos, and make sure they are showing good builds, and can be informative, if you get nearly around ~1,000 or more views, excellent, you're on a good path, keep it up, subscribers are also good but don't matter as much.</li>
-      <li><strong>For Your Information (FYI)</strong>: Ever since my good friend made it in Gold rank despite much lower stats than me, with these stats recorded, this predictor gets changed more and more, I also think of and find ways to improve this predictor, it isn't all that easy but if it helps someone, awesome!</li>
-    </ul>
+        <button onclick="predict()">Predict Rank Outcome</button>
 
-    <div class="disclaimer">
-      This is an unofficial community-made estimator. Not affiliated at all with Pixonic or MY.GAMES. I, an anonymous Silver rank Creator in the Program since the SWORD Unit-190 event also made this predictor and will be continuously updating it for errors via VS (Visual Studio) Code and releasing it further, even if I make it into Gold rank.
+        <div id="result"></div>
+      </div>
+
+      <!-- INFO -->
+      <div class="box info">
+        <p><strong>How You Know You Made It To Gold Rank:</strong></p>
+        <ul>
+          <li><i><b>Dashboard Rank Update [Primary] - This is the only 100% confirmed signal.</b></i></li>
+          <p>Rank changes from Silver > Gold.</p>
+          <p>Usually during: Monthly Review / Backend Refresh.</p>
+          <p>May happen without any notification.</p>
+          <p>This is the main truth.</p>
+          <li><i><b>Silent Dashboard Promotion [Very Real]</b></i></li>
+          <p>This happens more than people think.</p>
+          <p>No Email.</p>
+          <p>No Announcement.</p>
+          <p>You just refresh the Dashboard one day and... Gold.</p>
+          <li><i><b>Rewards / Benefits Unlocking [Easy To Spot]</b></i></li>
+          <p>Gold rank unlocks things Silver doesn't.</p>
+          <p>Depending on the period:</p>
+          <p>Better Creator Program Rewards.</p>
+          <p>Eligibility for higher-tier drops.</p>
+          <p>Backend Flags Change.</p>
+          <p>Creators often notice rewards changing first, then see the rank update.</p>
+        </ul>
+        <p><b>This predictor is entirely observational, and not official, none of this is affiliated with Pixonic or MY.GAMES, it uses patterns from the past to behave similar to how Pixonic / MY.GAMES would work and behave.</b></p>
+      </div>
+
     </div>
+
+    <!-- RIGHT SIDE -->
+     <button id="toggleAboutBtn" onclick="toggleAbout()">
+  ℹ️ About the Creator
+     </button>
+
+    <div id="aboutPanel" class="about-panel" style="display: none;">
+      
+      <h2>About The Unique Creator:</h2>
+
+      <p>
+        I’m an anonymous War Robots Content Creator Program member.
+        I am also on Spotify, who makes Phonk and absolutely loves tracks like NEON BLADE 
+        by MoonDeity and I make the actual good Phonk like in 2020+, etc, which I do NOT like 
+        "Phonks" that are considered that by Spotify when in reality they're Brazilian Funk...
+        I got into the Creator Program since the SWORD Unit-190 event, which is 
+        update 11.1, which started shortly after our final GCSE exams started (I failed badly), 
+        the event started on the day of our Computing exam, and so ever since then I've been 
+        regularly trying in the program, trying to get promoted, but nothing ever happened, 
+        then once the current event, update 11.6 reached, my favorite themed gear/equipment 
+        such as the new Hastatus robot and Princeps titan got released, I was devastated to not 
+        get it, which I then told myself "I NEED to work HARDER, and START GRINDING SERIOUSLY!", 
+        with that, even though I was doing fairly decent to good, I improved videos, shorts, streams, 
+        primarily videos, and their thumbnails, as of right now, it's 2:43 A.M just reached 29th December, in 
+        2025, and on the 26th, around ~20:00/8 P.M (UK, London time), is when my good friend made it in Gold rank, 
+        how come? Simple, the most probable and likely reason for this is, due to his low stats, Pixonic saw that 
+        he "might leave", with JUST under 10 videos, but also ~500+ views, so Pixonic didn't say a word, and 
+        promoted him, they conditionally gave him Gold, as from then on, they expect good content from it, good 
+        results, which adds pressure, but he gets free stuff, and if not up to Pixonic's expectations, he could 
+        get demoted to Silver, but I'm happy for him, for me, I am doing very good right now for my stats, so I get a 
+        comfortable Gold rank promotion in the long-run, even if I get a delayed Gold rank promotion, right now, I 
+        don't mind not getting promoted right now, but hopefully after the next event (after update 11.7).
+
+      </p>
+
+      <p>
+        I originally started as a small Roblox creator, I knew some editing, thumbnails, etc, slowly, 
+        I overtime started to go more and more with War Robots content, especially ever since making it 
+        into the Creator Program, I focused a lot of my content on WR, I still do Roblox content as a 
+        "side-video" but I am mostly now known for being a WR Creator.
+      </p>
+
+      <p>
+        This predictor was thought of and then built via VS (Visual Studio Code) during my huge improvement 
+        from Silver rank to Gold rank, since then, i've been improving it more and more, based on patterns I've 
+        seen and from previous patterns, basically on how Pixonic behaves, and so this predictor was first designed 
+        to mainly predict when I could make it, but I then decided "Might as well release it publicly to help future 
+        Silver rank creators.", and here I am today, so this predictor reflects how promotions actually happen in practice.
+      </p>
+
+      <p class="small">
+      Community-made • Unofficial • Continuously refined
+      </p>
+    </div>
+
   </div>
 
-  
-   <script>
-  function clamp(val, min, max) {
-    return Math.max(min, Math.min(max, val));
+  <script>
+    function toggleAbout() {
+  const panel = document.getElementById("aboutPanel");
+  const btn = document.getElementById("toggleAboutBtn");
+
+  if (panel.style.display === "none") {
+    panel.style.display = "block";
+    btn.textContent = "❌ Hide About the Creator";
+  } else {
+    panel.style.display = "none";
+    btn.textContent = "ℹ️ About the Creator";
   }
-
-  function predict() {
-    const videos = Number(document.getElementById("videos").value);
-    const views = Number(document.getElementById("views").value);
-    const subs = Number(document.getElementById("subs").value);
-
-    const prevVideos = Number(document.getElementById("prevVideos").value);
-    const prevViews = Number(document.getElementById("prevViews").value);
-    const tenure = document.querySelector('input[name="tenure"]:checked').value;
-
-
-    let score = 0;
-    let notes = [];
-
-    // 1️⃣ Upload consistency (MOST IMPORTANT)
-    if (videos >= 6) { score += 3; notes.push("Active uploads this period"); }
-    if (prevVideos >= 6) { score += 3; notes.push("Active uploads last period"); }
-    if (videos >= prevVideos - 3) { score += 2; notes.push("Stable upload frequency"); }
-
-    // 2️⃣ View stability (NOT growth-based)
-    if (prevViews > 0 && views >= prevViews * 0.7) {
-      score += 2;
-      notes.push("Views remained stable");
-    }
-    if (views > prevViews) {
-      score += 2;
-      notes.push("Views improved");
-    }
-
-    // 3️⃣ Continuity (no inactivity)
-    if (videos > 0 && prevVideos > 0) {
-      score += 2;
-      notes.push("No inactivity detected");
-    }
-
-    // 4️⃣ Subscribers (supporting only, NEVER blocking)
-    if (subs >= 500) {
-      score += 1;
-      notes.push("Supportive subscriber base");
-    }
-
-    // 🕒 Time-in-program weighting (trust factor)
-if (tenure === "new") {
-  score -= 2; // Pixonic often waits longer
-} else if (tenure === "mid") {
-  score += 0; // neutral
-} else if (tenure === "long") {
-  score += 2; // trusted creator boost
 }
 
-    // Cap score
-    score = clamp(score, 0, 13);
+    let tenure = 0;
 
-    // Verdict + probability bands
-    let verdict, probability, window;
+    function setTenure(value) {
+      tenure = value;
+      document.querySelectorAll('.tenure-options button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tenure-options button')[value - 1].classList.add('active');
+    }
 
-    if (score >= 10) {
-  if (tenure === "new") {
-  verdict = "⚠️ Strong stats, but new Silver (review likely delayed)";
-} 
-else if (tenure === "mid") {
-  verdict = "✅ Good eligibility for Gold (review-dependent)";
-} 
-else {
-  verdict = "✅ Strong eligibility for Gold";
+    function predict() {
+      // Blocks prediction if stats are missing
+if (
+  videos.value === "" ||
+  views.value === "" ||
+  prevVideos.value === "" ||
+  prevViews.value === ""
+) {
+  result.innerHTML = "⚠️ Please enter all current and previous period stats.";
+  return;
 }
 
-  probability = "75–90%";
-  window = "Next monthly review";
+      if (tenure === 0) {
+  result.innerHTML = "⚠️ Please select your time in the Creator Program.";
+  return;
 }
-else if (score >= 7) {
-  verdict = "⚠️ Possible Gold (human review)";
-  probability = "55–70%";
+
+      const v = Number(videos.value);
+      const vw = Number(views.value);
+      const pv = Number(prevVideos.value);
+      const pvw = Number(prevViews.value);
+
+      let score = 0;
+
+      if (v >= pv) score += 2;
+      if (vw >= pvw) score += 3;
+      if (v >= 10) score += 2;
+      if (vw >= 700) score += 3;
+
+      let tenureModifier = 1;
+
+if (tenure === 1) tenureModifier = 0.85; // new Silver = delayed trust
+if (tenure === 2) tenureModifier = 1.0;  // normal
+if (tenure === 3) tenureModifier = 1.1;  // long-term trust
+
+score = Math.round(score * tenureModifier);
+
+      score = Math.min(score, 13);
+
+      // 📈 Trend detection
+let trendText = "📉 Trend: Decline vs last period";
+
+if (v > pv && vw > pvw) {
+  trendText = "📈 Trend: Improved vs last period";
+} else if (v === pv && vw === pvw) {
+  trendText = "➖ Trend: Stable vs last period";
+}
+
+// ⏳ Estimated Gold window (timing logic)
+let window = "Future review";
+
+if (score >= 10) {
+  if (v >= 15 && pv >= 6 && tenure > 1) {
+    window = "Likely promoted at period boundary";
+  } else if (v < 10 && tenure > 1) {
+    window = "Promotion possible anytime";
+  } else {
+    window = "Next monthly review";
+  }
+} else if (score >= 7) {
   window = "Next 1–2 review cycles";
 }
-else {
-  verdict = "❌ Likely staying Silver for now";
-  probability = "<40%";
-  window = "Future review";
+
+
+      let text = "⚠️ Staying Silver for now";
+let prob = "40%";
+
+if (score >= 10) {
+  if (tenure === 1) {
+    text = "⚠️ Strong stats, but new Silver (review likely delayed)";
+    prob = "60–75%";
+  } else if (tenure === 2) {
+    text = "✅ Good chance of reaching Gold";
+    prob = "70–85%";
+  } else {
+    text = "✅ Strong chance of reaching Gold";
+    prob = "75–90%";
+  }
+}
+else if (score >= 7) {
+  if (tenure === 1) {
+    text = "🟡 Promising start, needs time in program";
+    prob = "45–60%";
+  } else {
+    text = "🟡 Possible, but needs consistency";
+    prob = "55–70%";
+  }
 }
 
 
-    // Trend (display only, informational)
-    let trendText = "";
-    if (prevVideos > 0 && prevViews > 0) {
-      if (videos > prevVideos && views > prevViews) {
-        trendText = "📈 Trend: Improved vs Last Period";
-      } else if (videos < prevVideos && views < prevViews) {
-        trendText = "📉 Trend: Decline vs Last Period";
-      } else {
-        trendText = "➖ Trend: Mixed vs Last Period";
-      }
-    }
+      result.innerHTML = `
+  <strong>${text}</strong><br>
+  (${prob})<br><br>
 
-    document.getElementById("result").innerHTML = `
-      <strong>${verdict}</strong><br>
-      (${probability} probability)<br><br>
-      ⏳ <strong>Estimated Gold Window:</strong><br>
-      ${window}
-      <div class="trend">${trendText}</div>
-      <div class="trend">📊 Consistency Score: ${score}/13</div>
-    `;
-  }
-</script>
+  ⏳ <strong>Estimated Gold Window:</strong><br>
+  ${window}<br><br>
+
+  <div class="trend">${trendText}</div>
+  <div class="trend">📊 Consistency Score: ${score}/13</div>
+`;
+
+    }
+  </script>
 
 </body>
 </html>
