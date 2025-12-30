@@ -1,32 +1,15 @@
 ⚠️ GO TO THE COMMENT SECTION TO DOWNLOAD IT AND ACCESS IT FROM THERE. ⚠️
+⚠️ For iOS (I only own an iPhone), JavaScript/JS won't work with the system. ⚠️ 
+⚠️ Not sure about Android, but Recommendably use this on a computer. ⚠️
 
-⚠️ For iOS (I only own an iPhone), JavaScript/JS won't work with the system, not sure about Android, 
+⚠️ Review the code if you want, but go to the comments to find my comment which has the ".html" file there, 
+once downloaded, either in your browser, by the extensions is where the downloads normally are, you click once, 
+it should instantly open up the file in your browser and you freely use it. Otherwise, with your File Explorer, 
+on the downloads part, you double-click inside there, then it'll instantly open it up in your browser. ⚠️
 
-Recommendably use this on a computer. ⚠️
+⚠️ I also edit the code inside the predictor to make changes, please make sure to get the latest version of this predictor. ⚠️
 
-———————————————————————————————————————————————————————————————
-
-How to use this code and predictor (easy):
-
-1. - For computers, make sure to have VS (Visual Studio) Code installed and make sure it works fine, 
-firstly, make a "Text Document" file in anywhere on your files, such as your "Documents" folder.
-
-2. - Rename it to "WR Creator Program Predictor.html", to make full sure that it's a ".html" file type, go to "View" at the top of File Explorer, 
-at the bottom of the "View" list, click on "Show" and once a new small list pops up, click on "File name extensions", there if it says ".txt", 
-remove that, replace it with ".html", if a window pops up saying "If you change a file name extension, the file might become unusable." 
-click "Yes" or press "Enter" on your keyboard.
-
-3. - Head into VS Code, we'll open our text file that we made, you can press Ctrl + O and double click that exact text file in your File Explorer, 
-or, on the top left corner, click on "File" > "Open File..." and double click on the exact text file made, you'll then have a clean, empty text file in VS Code.
-
-4. - Paste in the code (right click > "Paste" / Ctrl + V) below into this text file, then make sure to save it by pressing Ctrl + S.
-
-5. - Go back to that ".html" file on File Explorer, then right click/hover on "Open with" > your browser, then you can double click on it later on, 
-and it'll open in your browser, and you can use it freely to estimate, enjoy!
-
-———————————————————————————————————————————————————————————————
-
-Code (Optional: copy and paste):
+Code:
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +30,25 @@ Code (Optional: copy and paste):
       text-align: center;
       margin-top: 20px;
     }
+
+    .tooltip-word {
+  text-decoration: underline;
+      cursor: pointer;
+      color: #15ff00;
+    }
+
+    .tooltip-box {
+      position: fixed;
+      background: #11151f;
+      border: 1px solid #2f6bff;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 260px;
+      font-size: 13px;
+      display: none;
+      z-index: 1000;
+    }
+
 
     /* PAGE LAYOUT */
     .page-wrapper {
@@ -289,7 +291,65 @@ Code (Optional: copy and paste):
 
   </div>
 
+  <div id="tooltip" class="tooltip-box">
+  <strong>Period boundary</strong><br>
+  This usually means the moment when Pixonic checks everyone’s creator stats again.
+  It often happens at the start of a new month.
+  That’s when ranks can change..
+</div>
+
   <script>
+
+    let tooltipPinned = false;
+let tooltipTimer;
+
+document.addEventListener("mousemove", (e) => {
+  const tooltip = document.getElementById("tooltip");
+
+  if (!tooltipPinned && tooltip.style.display === "block") {
+    tooltip.style.top = e.clientY + 15 + "px";
+    tooltip.style.left = e.clientX + 15 + "px";
+  }
+});
+
+document.addEventListener("mouseover", (e) => {
+  if (e.target.classList.contains("tooltip-word")) {
+    tooltipTimer = setTimeout(() => {
+      showTooltip(e);
+    }, 500); // 0.5 seconds
+  }
+});
+
+document.addEventListener("mouseout", (e) => {
+  if (e.target.classList.contains("tooltip-word")) {
+    clearTimeout(tooltipTimer);
+    if (!tooltipPinned) hideTooltip();
+  }
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.classList.contains("tooltip-word") && tooltipPinned) {
+    tooltipPinned = false;
+    hideTooltip();
+  }
+});
+
+function showTooltip(e) {
+  const tooltip = document.getElementById("tooltip");
+  tooltip.style.display = "block";
+  tooltip.style.top = e.clientY + 15 + "px";
+  tooltip.style.left = e.clientX + 15 + "px";
+}
+
+function hideTooltip() {
+  document.getElementById("tooltip").style.display = "none";
+}
+
+function pinTooltip(e) {
+  tooltipPinned = true;
+  showTooltip(e);
+}
+
     function toggleAbout() {
   const panel = document.getElementById("aboutPanel");
   const btn = document.getElementById("toggleAboutBtn");
@@ -364,7 +424,7 @@ let window = "Future review";
 
 if (score >= 10) {
   if (v >= 15 && pv >= 6 && tenure > 1) {
-    window = "Likely promoted at period boundary";
+    window = `Likely promoted at <span class="tooltip-word" onclick="pinTooltip(event)">period boundary</span>`;
   } else if (v < 10 && tenure > 1) {
     window = "Promotion possible anytime";
   } else {
@@ -413,6 +473,7 @@ else if (score >= 7) {
 `;
 
     }
+    
   </script>
 
 </body>
