@@ -410,13 +410,40 @@ score = Math.round(score * tenureModifier);
 
       score = Math.min(score, 13);
 
-      // 📈 Trend detection
-let trendText = "📉 Trend: Decline vs last period";
+      // 📈 Polished trend detection
+let trendText = "📉 Trend: Reduced Activity vs Last Period";
 
-if (v > pv && vw > pvw) {
-  trendText = "📈 Trend: Improved vs last period";
-} else if (v === pv && vw === pvw) {
-  trendText = "➖ Trend: Stable vs last period";
+const videoDiff = v - pv;
+const viewDiff = vw - pvw;
+
+// 🚀 Massive effort increase
+if (videoDiff >= 10) {
+  trendText = "🚀 Trend: Strong Improvement vs Last Period";
+}
+
+// 📈 Clear improvement
+else if (videoDiff >= 5) {
+  trendText = "📈 Trend: Improved vs Last Period";
+}
+
+// 📈 Balanced growth (both metrics up)
+else if (videoDiff > 0 && viewDiff > 0) {
+  trendText = "📈 Trend: Improved vs Last Period";
+}
+
+// ➖ Roughly the same
+else if (Math.abs(videoDiff) <= 1 && Math.abs(viewDiff) <= 100) {
+  trendText = "➖ Trend: Stable vs Last Period";
+}
+
+// ⛔ Major drop
+else if (videoDiff <= -5) {
+  trendText = "⛔ Trend: Sharp Decline vs Last Period";
+}
+
+// 📉 Slight drop (fallback)
+else {
+  trendText = "📉 Trend: Reduced Activity vs Last Period";
 }
 
 // ⏳ Estimated Gold window (timing logic)
