@@ -372,6 +372,11 @@ function pinTooltip(e) {
     }
 
     function predict() {
+
+      // 📅 Auto-detect monthly reset (1st of month)
+      const today = new Date();
+      const isPeriodReset = today.getDate() === 1;
+
       // Blocks prediction if stats are missing
 if (
   videos.value === "" ||
@@ -409,6 +414,92 @@ if (tenure === 3) tenureModifier = 1.1;  // long-term trust
 score = Math.round(score * tenureModifier);
 
       score = Math.min(score, 13);
+
+      // 🔄 AUTOMATIC PERIOD RESET OVERRIDE (Day 1 logic)
+if (isPeriodReset) {
+
+  let text = "";
+  let prob = "";
+  let window = "";
+  let trendText = "🔄 New monthly period just started - using last period's performance";
+
+  if (pv >= 20) {
+    text = "✅ Strong momentum from last period";
+    prob = "75–90%";
+    window = "Quite likely for a promotion once uploads are resumed";
+  }
+  else if (pv >= 15) {
+    text = "🟢 Likely to perform well again";
+    prob = "65–80%";
+    window = "Promotion likely this cycle";
+  }
+  else if (pv >= 10) {
+    text = "🟡 Decent last period, needs early proof";
+    prob = "50–65%";
+    window = "Depends on early uploads this month";
+  }
+  else {
+    text = "⚠️ Weak last period activity";
+    prob = "30–45%";
+    window = "Needs strong restart to recover";
+  }
+
+  result.innerHTML = `
+    <strong>${text}</strong><br>
+    (${prob})<br><br>
+
+    ⏳ <strong>Estimated Gold Window:</strong><br>
+    ${window}<br><br>
+
+    <div class="trend">${trendText}</div>
+    <div class="trend">📊 Last Period Videos: ${pv}</div>
+  `;
+
+  return;
+}
+
+    // 🔄 NEW PERIOD RESET OVERRIDE
+if (resetMode) {
+
+  let text = "";
+  let prob = "";
+  let window = "";
+  let trendText = "🔄 New period reset — judging based on last period";
+
+  if (pv >= 20) {
+    text = "✅ Strong momentum from last period";
+    prob = "75–90%";
+    window = "Very likely promotion once uploads resume";
+  }
+  else if (pv >= 15) {
+    text = "🟢 Likely to perform well again";
+    prob = "65–80%";
+    window = "Promotion likely this cycle";
+  }
+  else if (pv >= 10) {
+    text = "🟡 Decent last period, needs proof again";
+    prob = "50–65%";
+    window = "Depends on early uploads this period";
+  }
+  else {
+    text = "⚠️ Weak last period activity";
+    prob = "30–45%";
+    window = "Needs strong restart to recover";
+  }
+
+  result.innerHTML = `
+    <strong>${text}</strong><br>
+    (${prob})<br><br>
+
+    ⏳ <strong>Estimated Gold Window:</strong><br>
+    ${window}<br><br>
+
+    <div class="trend">${trendText}</div>
+    <div class="trend">📊 Last Period Videos: ${pv}</div>
+  `;
+
+  return;
+}
 
       // 📈 Polished trend detection
 let trendText = "📉 Trend: Reduced Activity vs Last Period";
