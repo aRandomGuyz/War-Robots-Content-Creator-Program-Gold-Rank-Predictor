@@ -422,27 +422,40 @@ if (isPeriodReset) {
   let text = "";
   let prob = "";
   let window = "";
-  let trendText = "🔄 New monthly period just started - using last period's performance";
+  let trendText = "🔄 New monthly period — judging based on last period";
 
   if (pv >= 20) {
-    text = "✅ Strong momentum from last period";
-    prob = "75–90%";
-    window = "Quite likely for a promotion once uploads are resumed";
+    if (tenure === 1) {
+      text = "⚠️ Strong last period, but new Silver under observation";
+      prob = "55–70%";
+      window = "Likely reviewed after more activity";
+    } else if (tenure === 2) {
+      text = "✅ Strong momentum, promotion likely if activity resumes";
+      prob = "65–80%";
+      window = "Possible promotion this cycle";
+    } else {
+      text = "✅ Strong momentum from proven creator";
+      prob = "75–90%";
+      window = "Very likely promotion at review";
+    }
   }
+
   else if (pv >= 15) {
-    text = "🟢 Likely to perform well again";
-    prob = "65–80%";
-    window = "Promotion likely this cycle";
+    if (tenure === 1) {
+      text = "🟡 Decent last period, but trust still forming";
+      prob = "45–60%";
+      window = "Needs early uploads";
+    } else {
+      text = "🟢 Likely to perform well again";
+      prob = "60–75%";
+      window = "Promotion possible this cycle";
+    }
   }
-  else if (pv >= 10) {
-    text = "🟡 Decent last period, needs early proof";
-    prob = "50–65%";
-    window = "Depends on early uploads this month";
-  }
+
   else {
     text = "⚠️ Weak last period activity";
     prob = "30–45%";
-    window = "Needs strong restart to recover";
+    window = "Needs strong restart";
   }
 
   result.innerHTML = `
@@ -455,7 +468,6 @@ if (isPeriodReset) {
     <div class="trend">${trendText}</div>
     <div class="trend">📊 Last Period Videos: ${pv}</div>
   `;
-
   return;
 }
 
