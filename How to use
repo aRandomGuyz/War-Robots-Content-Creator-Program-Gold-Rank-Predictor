@@ -9,13 +9,19 @@ on the downloads part, you double-click inside there, then it'll instantly open 
 
 ⚠️ I also edit the code inside the predictor to make changes, please make sure to get the latest version of this predictor. ⚠️
 
-Code:
+Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BETWEEN 2 PREDICTORS, 1 MAIN, DEFAULT PREDICTOR, 1 SMALLER, CLEANER PREDICTOR, THE SECOND CODE IS AVAILABLE IN THE DOWNLOAD. ⚠️⚠️]
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>WR Creator Program Rank Predictor</title>
+
+  <div class="mode-switch">
+  <button onclick="location.href='Predictor-Lite.html'">
+    Switch to The Cleaner Predictor (Lite)
+  </button>
+</div>
 
   <style>
     body {
@@ -48,7 +54,6 @@ Code:
       display: none;
       z-index: 1000;
     }
-
 
     /* PAGE LAYOUT */
     .page-wrapper {
@@ -123,6 +128,26 @@ Code:
       background: #2f6bff;
     }
 
+    /* SWITCH BUTTON */
+    .mode-switch {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .mode-switch button {
+      background: transparent;
+      border: 1px solid #00ff0d;
+      color: #ff9900;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .mode-switch button:hover {
+      background: rgba(110, 231, 255, 0.1);
+    }
+
     /* ABOUT PANEL */
     #toggleAboutBtn {
       width: 35%;
@@ -164,6 +189,7 @@ Code:
       margin-top: 10px;
       font-weight: bold;
     }
+    
   </style>
 </head>
 
