@@ -1,8 +1,8 @@
 ⚠️ GO TO THE COMMENT SECTION TO DOWNLOAD IT AND ACCESS IT FROM THERE. ⚠️
-⚠️ For iOS (I only own an iPhone), JavaScript/JS won't work with the system. ⚠️ 
-⚠️ Not sure about Android, but Recommendably use this on a computer. ⚠️
+⚠️ For iOS (I only own an iPhone), the coding won't work with the system and the predict rank button will NOT work. ⚠️ 
+⚠️ Android works, even on an emulator, you can also use this on a computer. ⚠️
 
-⚠️ Review the code if you want, but go to the comments to find my comment which has the ".html" file there, 
+⚠️ Review and check the code if you want, but go to the comments to find my comment which has the ".html" file there, 
 once downloaded, either in your browser, by the extensions is where the downloads normally are, you click once, 
 it should instantly open up the file in your browser and you freely use it. Otherwise, with your File Explorer, 
 on the downloads part, you double-click inside there, then it'll instantly open it up in your browser. ⚠️
@@ -150,7 +150,7 @@ Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BET
 
     /* ABOUT PANEL */
     #toggleAboutBtn {
-      width: 35%;
+      width: 30%;
       margin-bottom: 10px;
       padding: 10px;
       border-radius: 8px;
@@ -166,8 +166,8 @@ Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BET
     }
 
     .about-panel {
-      max-width: 600px;
-      background: #11151f;
+      max-width: 500px;
+      background: #1f273a;
       padding: 20px;
       border-radius: 12px;
       font-size: 14px;
@@ -245,7 +245,6 @@ Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BET
           <p>This is the main truth.</p>
           <li><i><b>Silent Dashboard Promotion [Very Real]</b></i></li>
           <p>This happens more than people think.</p>
-          <p>No Email.</p>
           <p>No Announcement.</p>
           <p>You just refresh the Dashboard one day and... Gold.</p>
           <li><i><b>Rewards / Benefits Unlocking [Easy To Spot]</b></i></li>
@@ -254,7 +253,7 @@ Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BET
           <p>Better Creator Program Rewards.</p>
           <p>Eligibility for higher-tier drops.</p>
           <p>Backend Flags Change.</p>
-          <p>Creators often notice rewards changing first, then see the rank update.</p>
+          <p>Creators often notice rewards changing first, then see the rank update, or the other way around.</p>
         </ul>
         <p><b>This predictor is entirely observational, and not official, none of this is affiliated with Pixonic or MY.GAMES, it uses patterns from the past to behave similar to how Pixonic / MY.GAMES would work and behave.</b></p>
       </div>
@@ -263,7 +262,7 @@ Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BET
 
     <!-- RIGHT SIDE -->
      <button id="toggleAboutBtn" onclick="toggleAbout()">
-  ℹ️ About the Creator
+  ℹ️ About The Creator
      </button>
 
     <div id="aboutPanel" class="about-panel" style="display: none;">
@@ -382,10 +381,10 @@ function pinTooltip(e) {
 
   if (panel.style.display === "none") {
     panel.style.display = "block";
-    btn.textContent = "❌ Hide About the Creator";
+    btn.textContent = "❌ Hide About The Creator";
   } else {
     panel.style.display = "none";
-    btn.textContent = "ℹ️ About the Creator";
+    btn.textContent = "ℹ️ About The Creator";
   }
 }
 
@@ -401,7 +400,7 @@ function pinTooltip(e) {
 
       // 📅 Auto-detect monthly reset (1st of month)
       const today = new Date();
-      const isPeriodReset = today.getDate() >= 1 && today.getDate() <= 7;
+      const isPeriodReset = today.getDate() >= 1 && today.getDate() <= 10;
 
 
       // Blocks prediction if stats are missing
@@ -440,7 +439,34 @@ if (tenure === 3) tenureModifier = 1.1;  // long-term trust
 
 score = Math.round(score * tenureModifier);
 
-      score = Math.min(score, 13);
+// 🔥 Promotion Pressure (internal, invisible to user)
+let pressure = 0;
+
+// Momentum acceleration (rate, not raw totals)
+if (pv > 0) {
+  const videoGrowthRate = (v - pv) / pv;
+  if (videoGrowthRate >= 0.5) pressure += 2;
+  else if (videoGrowthRate >= 0.25) pressure += 1;
+}
+
+// View efficiency (views per video improvement)
+const currVPV = v > 0 ? vw / v : 0;
+const prevVPV = pv > 0 ? pvw / pv : 0;
+
+if (currVPV > prevVPV * 1.2) pressure += 2;
+else if (currVPV > prevVPV) pressure += 1;
+
+// Low-stat but consistent creator boost
+if (vw < 1000 && v >= 6 && pv >= 5 && tenure <= 2) {
+  pressure += 2;
+}
+
+// Long-term Silver stagnation dampener
+if (tenure === 3 && score < 9) {
+  pressure -= 1;
+}
+
+      score = Math.min(score + pressure, 13);
 
       // 🔄 AUTOMATIC PERIOD RESET OVERRIDE (Day 1 logic)
 if (isPeriodReset) {
@@ -497,7 +523,7 @@ if (isPeriodReset) {
   return;
 }
 
-      // 📈 Polished trend detection
+      // 📈 Trend detection
 let trendText = "📉 Trend: Reduced Activity vs Last Period";
 
 const videoDiff = v - pv;
@@ -526,11 +552,6 @@ else if (Math.abs(videoDiff) <= 1 && Math.abs(viewDiff) <= 100) {
 // ⛔ Major drop
 else if (videoDiff <= -5) {
   trendText = "⛔ Trend: Sharp Decline vs Last Period";
-}
-
-// 📉 Slight drop (fallback)
-else {
-  trendText = "📉 Trend: Reduced Activity vs Last Period";
 }
 
 // ⏳ Estimated Gold window (timing logic)
@@ -583,8 +604,7 @@ else if (score >= 7) {
   ${window}<br><br>
 
   <div class="trend">${trendText}</div>
-  <div class="trend">📊 Consistency Score: ${score}/13</div>
-`;
+  <div class="trend">📊 Evaluation Score: ${score}/13</div>`;
 
     }
     
