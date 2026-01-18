@@ -320,8 +320,14 @@ Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BET
   <strong>Period boundary</strong><br>
   This usually means the moment when Pixonic checks everyone’s creator stats again.
   It often happens at the start of a new month.
-  That’s when ranks can change..
+  That’s when ranks can change!
 </div>
+
+<!-- Example Creator Dashboard Preview -->
+<h2 style="text-align:center; margin-top:35px;">Example Creator Dashboard (Image Work-in-Progress)</h2>
+
+<img id="dashImg" alt="Example Dashboard Preview"
+style="display:block; max-width:90%; height:auto; margin:20px auto; border-radius:12px; box-shadow:0 0 25px rgba(0,0,0,0.6);">
 
   <script>
 
@@ -524,34 +530,34 @@ if (isPeriodReset) {
 }
 
       // 📈 Trend detection
-let trendText = "📉 Trend: Reduced Activity vs Last Period";
+let trendText;
 
-const videoDiff = v - pv;
-const viewDiff = vw - pvw;
+// Views stability check
+if (vw >= pvw * 0.85) {
+  
+  // Upload flow check
+  if (!isPeriodReset && v >= 4) {
+    trendText = "➖ Trend: Stable vs Last Period";
+  }
+  else if (isPeriodReset) {
+    trendText = "⏳ Early month — collecting data";
+  }
+  else {
+    trendText = "📈 Trend: Stable views, uploads resuming";
+  }
 
-// 🚀 Massive effort increase
-if (videoDiff >= 10) {
-  trendText = "🚀 Trend: Strong Improvement vs Last Period";
 }
-
-// 📈 Clear improvement
-else if (videoDiff >= 5) {
+// Clear improvement
+else if (vw > pvw) {
   trendText = "📈 Trend: Improved vs Last Period";
 }
-
-// 📈 Balanced growth (both metrics up)
-else if (videoDiff > 0 && viewDiff > 0) {
-  trendText = "📈 Trend: Improved vs Last Period";
+// Real decline only if views actually fell hard
+else if (vw < pvw * 0.7) {
+  trendText = "📉 Trend: Decline vs Last Period";
 }
-
-// ➖ Roughly the same
-else if (Math.abs(videoDiff) <= 1 && Math.abs(viewDiff) <= 100) {
-  trendText = "➖ Trend: Stable vs Last Period";
-}
-
-// ⛔ Major drop
-else if (videoDiff <= -5) {
-  trendText = "⛔ Trend: Sharp Decline vs Last Period";
+// Otherwise neutral
+else {
+  trendText = "➖ Trend: Mixed vs Last Period";
 }
 
 // ⏳ Estimated Gold window (timing logic)
@@ -560,15 +566,17 @@ let window = "Future review";
 if (score >= 10) {
   if (v >= 15 && pv >= 6 && tenure > 1) {
     window = `Likely promoted at <span class="tooltip-word" onclick="pinTooltip(event)">period boundary</span>`;
-  } else if (v < 10 && tenure > 1) {
+  } 
+  else if (v < 10 && tenure > 1) {
     window = "Promotion possible anytime";
-  } else {
+  } 
+  else {
     window = "Next monthly review";
   }
-} else if (score >= 7) {
+} 
+else if (score >= 7) {
   window = "Next 1–2 review cycles";
 }
-
 
       let text = "⚠️ Staying Silver for now";
 let prob = "40%";
