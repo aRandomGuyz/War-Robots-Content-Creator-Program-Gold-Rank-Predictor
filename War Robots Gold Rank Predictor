@@ -1,6 +1,6 @@
 ⚠️ GO TO THE COMMENT SECTION TO DOWNLOAD IT AND ACCESS IT FROM THERE. ⚠️
 ⚠️ For iOS (I only own an iPhone), the coding won't work with the system and the predict rank button will NOT work. ⚠️ 
-⚠️ Android works, even on an emulator, you can also use this on a computer. ⚠️
+⚠️ Android works, even on an emulator (I use LDPlayer 9), you can also use this on a computer. ⚠️
 
 ⚠️ Review and check the code if you want, but go to the comments to find my comment which has the ".html" file there, 
 once downloaded, either in your browser, by the extensions is where the downloads normally are, you click once, 
@@ -9,19 +9,11 @@ on the downloads part, you double-click inside there, then it'll instantly open 
 
 ⚠️ I also edit the code inside the predictor to make changes, please make sure to get the latest version of this predictor. ⚠️
 
-Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BETWEEN 2 PREDICTORS, 1 MAIN, DEFAULT PREDICTOR, 1 SMALLER, CLEANER PREDICTOR, THE SECOND CODE IS AVAILABLE IN THE DOWNLOAD. ⚠️⚠️]
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>WR Creator Program Rank Predictor</title>
-
-  <div class="mode-switch">
-  <button onclick="location.href='Predictor-Lite.html'">
-    Switch to The Cleaner Predictor (Lite)
-  </button>
-</div>
 
   <style>
     body {
@@ -229,6 +221,13 @@ Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BET
         <label>Previous Period Views</label>
         <input id="prevViews" type="number">
 
+<div style="text-align:center; margin-top:8px; font-size:13px; opacity:0.9;">
+  <label>
+    <input type="checkbox" id="eliteBoost">
+    I have exceptionally strong & stable Period stats (views).
+  </label>
+</div>
+
         <button onclick="predict()">Predict Rank Outcome</button>
 
         <div id="result"></div>
@@ -329,14 +328,13 @@ Code: [⚠️⚠️ THERE ARE NOW 2 VERSIONS OF CODE, MEANING YOU CAN SWITCH BET
 <img id="dashImg" alt="Example Dashboard Preview"
 style="display:block; max-width:90%; height:auto; margin:20px auto; border-radius:12px; box-shadow:0 0 25px rgba(0,0,0,0.6);">
 
-  <script>
+<script>
 
-    let tooltipPinned = false;
+let tooltipPinned = false;
 let tooltipTimer;
 
 document.addEventListener("mousemove", (e) => {
   const tooltip = document.getElementById("tooltip");
-
   if (!tooltipPinned && tooltip.style.display === "block") {
     tooltip.style.top = e.clientY + 15 + "px";
     tooltip.style.left = e.clientX + 15 + "px";
@@ -345,9 +343,7 @@ document.addEventListener("mousemove", (e) => {
 
 document.addEventListener("mouseover", (e) => {
   if (e.target.classList.contains("tooltip-word")) {
-    tooltipTimer = setTimeout(() => {
-      showTooltip(e);
-    }, 500); // 0.5 seconds
+    tooltipTimer = setTimeout(() => { showTooltip(e); }, 500);
   }
 });
 
@@ -381,7 +377,8 @@ function pinTooltip(e) {
   showTooltip(e);
 }
 
-    function toggleAbout() {
+// About panel
+function toggleAbout() {
   const panel = document.getElementById("aboutPanel");
   const btn = document.getElementById("toggleAboutBtn");
 
@@ -394,229 +391,178 @@ function pinTooltip(e) {
   }
 }
 
-    let tenure = 0;
+// Tenure selection
+let tenure = 0;
+function setTenure(value) {
+  tenure = value;
+  document.querySelectorAll('.tenure-options button')
+    .forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tenure-options button')[value - 1]
+    .classList.add('active');
+}
 
-    function setTenure(value) {
-      tenure = value;
-      document.querySelectorAll('.tenure-options button').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tenure-options button')[value - 1].classList.add('active');
+// MAIN PREDICTOR
+function predict() {
+
+let goldWindow = "Future review";
+
+  const eliteBoost = document.getElementById("eliteBoost").checked;
+
+  // Input validation
+  if (
+    videos.value === "" ||
+    views.value === "" ||
+    prevVideos.value === "" ||
+    prevViews.value === ""
+  ) {
+    result.innerHTML = "⚠️ Please enter all current and previous period stats.";
+    return;
+  }
+
+  if (tenure === 0) {
+    result.innerHTML = "⚠️ Please select your time in the Creator Program.";
+    return;
+  }
+
+  const v  = Number(videos.value);
+  const vw = Number(views.value);
+  const pv = Number(prevVideos.value);
+  const pvw= Number(prevViews.value);
+
+  // Day-phase logic
+  const today = new Date();
+  const day = today.getDate();
+  let periodPhase = "normal";
+  if (day <= 5) periodPhase = "fresh";
+  else if (day <= 10) periodPhase = "mid";
+
+  // Base score
+  let score = 0;
+  if (v >= pv) score += 2;
+  if (vw >= pvw) score += 3;
+  if (v >= 10) score += 2;
+  if (vw >= 700) score += 3;
+
+  let tenureModifier = 1;
+  if (tenure === 1) tenureModifier = 0.85;
+  if (tenure === 3) tenureModifier = 1.1;
+  score = Math.round(score * tenureModifier);
+
+  // ===== PERIOD RESET EARLY MONTH =====
+  if (periodPhase !== "normal") {
+
+    let trendText = (periodPhase === "fresh")
+      ? "🔄 New period just started — low stats are normal"
+      : "⏳ Early month — activity should be resuming";
+
+    let text, prob, window;
+
+    if (pv >= 20) {
+      text = "🟢 Strong last period momentum";
+      prob = "65–85%";
+      goldWindow = "Promotion possible this cycle";
+    }
+    else if (pv >= 12) {
+      text = "🟡 Decent last period activity";
+      prob = "50–70%";
+      goldWindow = "Needs early uploads";
+    }
+    else {
+      text = "⚠️ Weak last period activity";
+      prob = "30–50%";
+      goldWindow  = "Strong restart needed";
     }
 
-    function predict() {
+    result.innerHTML = `
+      <strong>${text}</strong><br>
+      (${prob})<br><br>
+      ⏳ <strong>Estimated Gold Window:</strong><br>
+      ${window}<br><br>
+      <div class="trend">${trendText}</div>
+      <div class="trend">📊 Last Period Videos: ${pv}</div>`;
+    return;
+  }
 
-      // 📅 Auto-detect monthly reset (1st of month)
-      const today = new Date();
-      const isPeriodReset = today.getDate() >= 1 && today.getDate() <= 10;
+  // ===== NEW TREND MODEL =====
 
+  const uploadMomentum = pv > 0 ? (v - pv) / pv : 0;
+  const viewMomentum   = pvw > 0 ? (vw - pvw) / pvw : 0;
 
-      // Blocks prediction if stats are missing
-if (
-  videos.value === "" ||
-  views.value === "" ||
-  prevVideos.value === "" ||
-  prevViews.value === ""
-) {
-  result.innerHTML = "⚠️ Please enter all current and previous period stats.";
-  return;
-}
+  const currVPV = v > 0 ? vw / v : 0;
+  const prevVPV = pv > 0 ? pvw / pv : 0;
+  const efficiencyMomentum = prevVPV > 0 ? (currVPV - prevVPV) / prevVPV : 0;
 
-      if (tenure === 0) {
-  result.innerHTML = "⚠️ Please select your time in the Creator Program.";
-  return;
-}
+  let momentumScore = 0;
 
-      const v = Number(videos.value);
-      const vw = Number(views.value);
-      const pv = Number(prevVideos.value);
-      const pvw = Number(prevViews.value);
+  if (uploadMomentum > 0.15) momentumScore += 1;
+  if (viewMomentum > 0.15) momentumScore += 2;
+  if (efficiencyMomentum > 0.10) momentumScore += 1;
 
-      let score = 0;
+  if (uploadMomentum < -0.25) momentumScore -= 1;
+  if (viewMomentum < -0.25) momentumScore -= 2;
+  if (efficiencyMomentum < -0.20) momentumScore -= 1;
 
-      if (v >= pv) score += 2;
-      if (vw >= pvw) score += 3;
-      if (v >= 10) score += 2;
-      if (vw >= 700) score += 3;
+  let trendText;
+  if (momentumScore >= 3) trendText = "📈 Trend: Accelerating growth";
+  else if (momentumScore >= 1) trendText = "🟢 Trend: Stable upward momentum";
+  else if (momentumScore <= -3) trendText = "📉 Trend: Sharp decline risk";
+  else if (momentumScore <= -1) trendText = "🟡 Trend: Slight slowdown";
+  else trendText = "➖ Trend: Stable equilibrium";
 
-      let tenureModifier = 1;
+// ===== STABILITY FLAGS =====
+const stableUploads = v >= 8;
+const stableViews = vw >= 600;
+const notDeclining = !trendText.includes("Decline") && !trendText.includes("decline");
 
-if (tenure === 1) tenureModifier = 0.85; // new Silver = delayed trust
-if (tenure === 2) tenureModifier = 1.0;  // normal
-if (tenure === 3) tenureModifier = 1.1;  // long-term trust
-
-score = Math.round(score * tenureModifier);
-
-// 🔥 Promotion Pressure (internal, invisible to user)
-let pressure = 0;
-
-// Momentum acceleration (rate, not raw totals)
-if (pv > 0) {
-  const videoGrowthRate = (v - pv) / pv;
-  if (videoGrowthRate >= 0.5) pressure += 2;
-  else if (videoGrowthRate >= 0.25) pressure += 1;
-}
-
-// View efficiency (views per video improvement)
-const currVPV = v > 0 ? vw / v : 0;
-const prevVPV = pv > 0 ? pvw / pv : 0;
-
-if (currVPV > prevVPV * 1.2) pressure += 2;
-else if (currVPV > prevVPV) pressure += 1;
-
-// Low-stat but consistent creator boost
-if (vw < 1000 && v >= 6 && pv >= 5 && tenure <= 2) {
-  pressure += 2;
-}
-
-// Long-term Silver stagnation dampener
-if (tenure === 3 && score < 9) {
-  pressure -= 1;
-}
-
-      score = Math.min(score + pressure, 13);
-
-      // 🔄 AUTOMATIC PERIOD RESET OVERRIDE (Day 1 logic)
-if (isPeriodReset) {
-
-  let text = "";
-  let prob = "";
-  let window = "";
-  let trendText = "🔄 New monthly period — judging based on last period";
-
-  if (pv >= 20) {
+  if (score >= 9 && notDeclining) {
     if (tenure === 1) {
-      text = "⚠️ Strong last period, but new Silver under observation";
-      prob = "55–70%";
-      window = "Likely reviewed after more activity";
-    } else if (tenure === 2) {
-      text = "✅ Strong momentum, promotion likely if activity resumes";
-      prob = "65–80%";
-      window = "Possible promotion this cycle";
-    } else {
-      text = "✅ Strong momentum from proven creator";
-      prob = "75–90%";
-      window = "Very likely promotion at review";
+      goldWindow = "Likely promoted after 1 additional review cycle";
+    }
+    else if (tenure === 2) {
+      goldWindow = `Likely promoted at <span class="tooltip-word" onclick="pinTooltip(event)">period boundary</span>`;
+    }
+    else {
+      goldWindow = `Very likely promotion at next <span class="tooltip-word" onclick="pinTooltip(event)">period boundary</span>`;
     }
   }
-
-  else if (pv >= 15) {
-    if (tenure === 1) {
-      text = "🟡 Decent last period, but trust still forming";
-      prob = "45–60%";
-      window = "Needs early uploads";
-    } else {
-      text = "🟢 Likely to perform well again";
-      prob = "60–75%";
-      window = "Promotion possible this cycle";
-    }
+  else if (score >= 8 && stableViews && notDeclining) {
+    goldWindow = "Promotion possible within next 1–2 cycles";
+  }
+  else if (score >= 7) {
+    goldWindow = "Needs stability before promotion";
   }
 
-  else {
-    text = "⚠️ Weak last period activity";
-    prob = "30–45%";
-    window = "Needs strong restart";
-  }
+// ===== FINAL RESULT TEXT =====
+
+let text = "⚠️ Staying Silver for now";
+let prob = "40%";
+
+// Elite boost override
+if (eliteBoost && notDeclining && tenure >= 2) {
+  text = "🚀 Extremely strong Gold candidate";
+  prob = "85–95%";
+  goldWindow = `Very likely next <span class="tooltip-word" onclick="pinTooltip(event)">period boundary</span>`;
+}
+else if (score >= 10) {
+  if (tenure === 1) { text = "⚠️ Strong stats, but new Silver"; prob = "60–75%"; }
+  else if (tenure === 2) { text = "✅ Good chance of reaching Gold"; prob = "70–85%"; }
+  else { text = "✅ Strong chance of reaching Gold"; prob = "75–90%"; }
+}
+else if (score >= 7) {
+  if (tenure === 1) { text = "🟡 Promising start"; prob = "45–60%"; }
+  else { text = "🟡 Possible, needs consistency"; prob = "55–70%"; }
+}
 
   result.innerHTML = `
     <strong>${text}</strong><br>
     (${prob})<br><br>
-
     ⏳ <strong>Estimated Gold Window:</strong><br>
-    ${window}<br><br>
-
+    ${goldWindow}<br><br>
     <div class="trend">${trendText}</div>
-    <div class="trend">📊 Last Period Videos: ${pv}</div>
-  `;
-  return;
+    <div class="trend">📊 Evaluation Score: ${score}/13</div>`;
 }
 
-      // 📈 Trend detection
-let trendText;
-
-// Views stability check
-if (vw >= pvw * 0.85) {
-  
-  // Upload flow check
-  if (!isPeriodReset && v >= 4) {
-    trendText = "➖ Trend: Stable vs Last Period";
-  }
-  else if (isPeriodReset) {
-    trendText = "⏳ Early month — collecting data";
-  }
-  else {
-    trendText = "📈 Trend: Stable views, uploads resuming";
-  }
-
-}
-// Clear improvement
-else if (vw > pvw) {
-  trendText = "📈 Trend: Improved vs Last Period";
-}
-// Real decline only if views actually fell hard
-else if (vw < pvw * 0.7) {
-  trendText = "📉 Trend: Decline vs Last Period";
-}
-// Otherwise neutral
-else {
-  trendText = "➖ Trend: Mixed vs Last Period";
-}
-
-// ⏳ Estimated Gold window (timing logic)
-let window = "Future review";
-
-if (score >= 10) {
-  if (v >= 15 && pv >= 6 && tenure > 1) {
-    window = `Likely promoted at <span class="tooltip-word" onclick="pinTooltip(event)">period boundary</span>`;
-  } 
-  else if (v < 10 && tenure > 1) {
-    window = "Promotion possible anytime";
-  } 
-  else {
-    window = "Next monthly review";
-  }
-} 
-else if (score >= 7) {
-  window = "Next 1–2 review cycles";
-}
-
-      let text = "⚠️ Staying Silver for now";
-let prob = "40%";
-
-if (score >= 10) {
-  if (tenure === 1) {
-    text = "⚠️ Strong stats, but new Silver (review likely delayed)";
-    prob = "60–75%";
-  } else if (tenure === 2) {
-    text = "✅ Good chance of reaching Gold";
-    prob = "70–85%";
-  } else {
-    text = "✅ Strong chance of reaching Gold";
-    prob = "75–90%";
-  }
-}
-else if (score >= 7) {
-  if (tenure === 1) {
-    text = "🟡 Promising start, needs time in program";
-    prob = "45–60%";
-  } else {
-    text = "🟡 Possible, but needs consistency";
-    prob = "55–70%";
-  }
-}
-
-
-      result.innerHTML = `
-  <strong>${text}</strong><br>
-  (${prob})<br><br>
-
-  ⏳ <strong>Estimated Gold Window:</strong><br>
-  ${window}<br><br>
-
-  <div class="trend">${trendText}</div>
-  <div class="trend">📊 Evaluation Score: ${score}/13</div>`;
-
-    }
-    
-  </script>
+</script>
 
 </body>
 </html>
